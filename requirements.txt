@@ -1,0 +1,29 @@
+# TradeDesk — Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# ── Web Framework ──────────────────
+Flask==3.0.3
+Flask-Session==0.8.0
+Werkzeug==3.0.4
+
+# ── Database ───────────────────────
+# sqlite3 is part of Python stdlib — no package needed
+
+# ── Security ───────────────────────
+bcrypt==4.2.0
+
+# ── Excel Processing ───────────────
+pandas==2.2.3
+openpyxl==3.1.5        # .xlsx read/write
+xlrd==2.0.1            # legacy .xls read support
+
+# ── Desktop Window ─────────────────
+pywebview==5.1          # Native window wrapper (optional — app works in browser too)
+
+# ── WSGI Server (used in launcher) ─
+# Werkzeug's built-in server is fine for local desktop use.
+# For more robust multi-user deployment, replace with gunicorn (Linux/macOS only):
+# gunicorn==22.0.0
+
+# ── Packaging ──────────────────────
+pyinstaller==6.10.0     # Build standalone executables

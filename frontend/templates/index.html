@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TradeDesk — Sales & Inventory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div id="toastContainer" class="toast-container"></div>
+
+<!-- LOGIN -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-logo-wrap">
+        <div class="logo-icon login-logo-icon">
+          <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M3 3h18v2H3zm0 4h12v2H3zm0 4h18v2H3zm0 4h12v2H3zm0 4h18v2H3z"/></svg>
+        </div>
+      </div>
+      <h1 class="login-title">TradeDesk</h1>
+      <p class="login-sub">Sign in to continue</p>
+    </div>
+    <div class="login-body">
+      <div id="loginError" class="alert alert-danger" style="display:none"></div>
+      <div class="login-field">
+        <label class="login-label" for="loginUsername">Username</label>
+        <div class="login-input-wrap">
+          <svg class="login-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          <input id="loginUsername" type="text" class="form-input login-input" placeholder="Enter username" autocomplete="username">
+        </div>
+      </div>
+      <div class="login-field">
+        <label class="login-label" for="loginPassword">Password</label>
+        <div class="login-input-wrap">
+          <svg class="login-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input id="loginPassword" type="password" class="form-input login-input" placeholder="Enter password" autocomplete="current-password">
+          <button type="button" onclick="toggleLoginPw(this)" class="login-pw-toggle" title="Show/hide password">
+            <svg id="loginPwEye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <button class="btn-login" onclick="doLogin()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><polyline points="15 3 21 3 21 9"/><path d="M10 14L21 3"/><path d="M21 15v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6"/></svg>
+        Sign In
+      </button>
+      <div class="login-hint-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12" style="flex-shrink:0;opacity:.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span>Default: <code class="login-code">admin</code> / <code class="login-code">admin123</code></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div id="appShell" class="app-shell" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon"><svg viewBox="0 0 24 24" fill="white" width="18" height="18"><path d="M3 3h18v2H3zm0 4h12v2H3zm0 4h18v2H3zm0 4h12v2H3zm0 4h18v2H3z"/></svg></div>
+      <span class="logo-text">TradeDesk</span>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Overview</span>
+      <div class="nav-item active" data-page="dashboard" onclick="navigateTo('dashboard',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        <span>Dashboard</span>
+      </div>
+      <span class="nav-section-label">Records</span>
+      <div class="nav-item" data-page="sales" onclick="navigateTo('sales',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>Sales</span>
+      </div>
+      <div class="nav-item" data-page="purchases" onclick="navigateTo('purchases',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span>Purchases</span>
+      </div>
+      <div class="nav-item" data-page="inventory" onclick="navigateTo('inventory',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        <span>Inventory</span>
+      </div>
+      <div class="nav-item" data-page="products" onclick="navigateTo('products',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span>Products</span>
+      </div>
+      <span class="nav-section-label" id="analyticsNavLabel">Analytics</span>
+      <div class="nav-item" id="reportsNavItem" data-page="reports" onclick="navigateTo('reports',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Reports</span>
+      </div>
+      <span class="nav-section-label" id="adminNavLabel">Admin</span>
+      <div class="nav-item" data-page="users" id="usersNavItem" onclick="navigateTo('users',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Users</span>
+      </div>
+      <div class="nav-item" data-page="auditlog" id="auditNavItem" onclick="navigateTo('auditlog',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <span>Audit Log</span>
+      </div>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="sidebarAvatar">AD</div>
+      <div class="user-info">
+        <div class="user-name" id="sidebarUsername">Admin</div>
+        <div class="user-role" id="sidebarRole">admin</div>
+      </div>
+      <div class="sidebar-user-actions">
+        <button class="icon-btn" title="Account Settings" onclick="openAccountModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <button class="icon-btn" title="Logout" onclick="doLogout()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="page-title" id="pageTitle">Dashboard</div>
+        <div class="page-subtitle" id="pageSubtitle">Overview of your sales activity and inventory.</div>
+      </div>
+      <div class="topbar-right">
+        <button class="theme-toggle" onclick="openScannerInput()" title="SKU / Barcode Lookup (press / or F2)" style="margin-right:4px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 8h2v8H7zM11 8h2v8h-2zM15 8h2v8h-2z"/></svg>
+          <span>Scan SKU</span>
+        </button>
+        <button class="theme-toggle" onclick="toggleTheme()">
+          <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <span id="themeLabel">Dark Mode</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card featured">
+            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+            <div class="stat-body"><div class="stat-label">Monthly Revenue</div><div class="stat-value" id="kpiRevenue">—</div><div class="stat-sub">Current month</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
+            <div class="stat-body"><div class="stat-label">Orders This Month</div><div class="stat-value" id="kpiOrders">—</div><div class="stat-sub">All statuses</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(217,119,6,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div>
+            <div class="stat-body"><div class="stat-label">Low Stock Items</div><div class="stat-value" id="kpiLowStock">—</div><div class="stat-sub">Below reorder point</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+            <div class="stat-body"><div class="stat-label">Unique Customers</div><div class="stat-value" id="kpiCustomers">—</div><div class="stat-sub">This month</div></div>
+          </div>
+        </div>
+        <div class="grid-2 mb-24">
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">Recent Sales</div><div class="card-subtitle">Latest transactions</div></div>
+              <button class="btn-link" onclick="navigateTo('sales',document.querySelector('[data-page=sales]'))">View All →</button>
+            </div>
+            <div class="card-list" id="recentSalesList"><div class="empty-state">Loading…</div></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div><div class="card-title">System Events</div><div class="card-subtitle">Recent imports & alerts</div></div></div>
+            <div class="card-list" id="recentEventsList"><div class="empty-state">Loading…</div></div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><div><div class="card-title">Daily Sales Trend</div><div class="card-subtitle">Last 14 days</div></div></div>
+            <div class="card-body"><div class="chart-container"><canvas id="salesTrendChart"></canvas></div></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div><div class="card-title">Stock by Category</div><div class="card-subtitle">Current units</div></div></div>
+            <div class="card-body"><div class="chart-container"><canvas id="stockLevelsChart"></canvas></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SALES -->
+      <div class="page" id="page-sales">
+        <div class="entry-toggle-bar">
+          <div class="toggle-group">
+            <div class="toggle-opt active" onclick="switchMode('sales','list',this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/></svg>
+              View Records
+            </div>
+            <div class="toggle-opt" id="salesAddTab" onclick="switchMode('sales','add',this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Sale
+            </div>
+            <div class="toggle-opt" id="salesBulkTab" onclick="switchMode('sales','bulk',this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/></svg>
+              Bulk Import
+            </div>
+          </div>
+        </div>
+
+        <!-- Sales List -->
+        <div id="sales-list-view">
+          <div class="card mb-24">
+            <div class="card-header">
+              <div><div class="card-title">Sales Records</div><div class="card-subtitle" id="salesTotalLabel">—</div></div>
+              <div class="header-actions">
+                <div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search…" oninput="_debouncedSales(this.value)"></div>
+              </div>
+            </div>
+            <!-- Bulk-delete toolbar (admin only, shown when rows are checked) -->
+            <div id="salesTbodyBulkBar" style="display:none;align-items:center;gap:10px;padding:8px 16px;background:rgba(220,38,38,.07);border-bottom:1px solid var(--border)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+              <span class="bulk-count" style="font-size:.82rem;font-weight:600;color:var(--danger)">0 selected</span>
+              <button class="topbar-btn" style="font-size:.75rem;padding:4px 12px;background:var(--danger);color:#fff;border:none;border-radius:6px;cursor:pointer" onclick="executeBulkDelete('salesTbody','sales',loadSales)">Delete Selected</button>
+              <button class="topbar-btn btn-ghost" style="font-size:.75rem;padding:4px 10px" onclick="clearBulkSelection('salesTbody')">Clear</button>
+            </div>
+            <div class="filter-bar">
+              <div class="chip active" data-fg="sf" onclick="salesState.status='';loadSales()">All</div>
+              <div class="chip" data-fg="sf" onclick="salesState.status='completed';loadSales()">Completed</div>
+              <div class="chip" data-fg="sf" onclick="salesState.status='pending';loadSales()">Pending</div>
+              <div class="chip" data-fg="sf" onclick="salesState.status='cancelled';loadSales()">Cancelled</div>
+            </div>
+            <div class="table-wrap">
+              <table><thead><tr>
+                <th style="width:32px"><input type="checkbox" id="salesTbodySelectAll" title="Select all" onchange="toggleSelectAll('salesTbody',this)" style="display:none"></th>
+                <th data-sort>Ref #</th><th data-sort>Product</th><th data-sort>Customer</th>
+                <th data-sort>Qty</th><th data-sort>Unit Price</th><th data-sort>Total</th>
+                <th data-sort>Date</th><th data-sort>Payment</th><th data-sort>Status</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="salesTbody"><tr><td colspan="11" class="empty-state">Loading…</td></tr></tbody></table>
+            </div>
+            <div class="table-pagination" id="salesPagination"></div>
+          </div>
+        </div>
+
+        <!-- Add Sale Form -->
+        <div id="sales-add-view" style="display:none">
+          <div class="card mb-24">
+            <div class="card-header"><div><div class="card-title">Add Sale Record</div><div class="card-subtitle">Records today's sales. To add backdated records use Bulk Import.</div></div></div>
+            <div class="card-body">
+              <div id="salesAddError" class="alert alert-danger" style="display:none;margin-bottom:14px"></div>
+              <div id="salesAddSuccess" class="alert alert-success" style="display:none;margin-bottom:14px"></div>
+              <form id="salesAddForm" onsubmit="submitAddSale(event)">
+                <div class="form-grid cols-3">
+                  <div class="form-group"><label class="form-label">Date <span class="req">*</span></label><input type="date" name="sale_date" id="saleDateInput" class="form-input" required readonly style="background:var(--surface-2);cursor:not-allowed;color:var(--text-3)" title="Sales can only be entered for today. Use Bulk Import for past dates."></div>
+                  <div class="form-group" style="grid-column:span 2"><label class="form-label">Product <span class="req">*</span></label>
+                    <select name="product_id" id="saleProductSelect" class="form-select" required><option value="">— Loading products… —</option></select>
+                  </div>
+                  <div class="form-group"><label class="form-label">Quantity <span class="req">*</span></label><input type="number" name="quantity" class="form-input" placeholder="1" min="1" required></div>
+                  <div class="form-group"><label class="form-label">Unit Price (KES) <span class="req">*</span></label><input type="number" name="unit_price" class="form-input" placeholder="0.00" step="0.01" min="0.01" required></div>
+                  <div class="form-group"><label class="form-label">Status</label><select name="status" class="form-select"><option value="completed">Completed</option><option value="pending">Pending</option><option value="cancelled">Cancelled</option></select></div>
+                  <div class="form-group"><label class="form-label">Customer Name</label><input type="text" name="customer_name" class="form-input" placeholder="Customer name"></div>
+                  <div class="form-group"><label class="form-label">Payment Method</label><select name="payment_method" class="form-select"><option>Cash</option><option>M-Pesa</option><option>Bank Transfer</option><option>Credit</option></select></div>
+                  <div class="form-group"><label class="form-label">Salesperson</label><input type="text" name="salesperson" class="form-input" placeholder="Optional"></div>
+                </div>
+                <div class="form-actions"><button type="submit" class="topbar-btn btn-primary">Save Sale</button><button type="reset" class="topbar-btn btn-ghost">Clear</button></div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bulk Sales Import -->
+        <div id="sales-bulk-view" style="display:none">
+          <div class="card mb-24">
+            <div class="card-header"><div><div class="card-title">Bulk Import Sales</div><div class="card-subtitle">Required columns: date, product_name, quantity, price</div></div>
+              <button class="topbar-btn btn-ghost" onclick="downloadTemplate('sales')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Template</button>
+            </div>
+            <div class="card-body">
+              <div class="upload-zone" onclick="document.getElementById('salesImportFile').click()">
+                <div class="upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+                <div class="upload-title" id="salesImportName">Drop or click to select file</div>
+                <div class="upload-sub">Supports <span>.xlsx</span> and <span>.xls</span></div>
+                <input type="file" id="salesImportFile" accept=".xlsx,.xls" style="display:none" onchange="document.getElementById('salesImportName').textContent=this.files[0]?.name||'Drop or click to select file'">
+              </div>
+              <button class="topbar-btn btn-primary" style="margin-top:14px" onclick="submitBulkImport('sales','salesImportFile','salesImportResult','salesFailedTbody')">Upload & Import</button>
+              <div id="salesImportResult" class="alert" style="display:none;margin-top:12px"></div>
+            </div>
+          </div>
+          <div class="card"><div class="card-header"><div><div class="card-title">Failed Records</div></div></div>
+            <div class="table-wrap"><table><thead><tr><th>Row #</th><th>Reason</th><th>Original Data</th></tr></thead><tbody id="salesFailedTbody"><tr><td colspan="3" class="empty-state">No failed records</td></tr></tbody></table></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INVENTORY -->
+      <div class="page" id="page-inventory">
+        <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+          <div class="stat-card featured"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div><div class="stat-body"><div class="stat-label">Total Value</div><div class="stat-value" id="invTotalValue">—</div></div></div>
+          <div class="stat-card"><div class="stat-body"><div class="stat-label">Active SKUs</div><div class="stat-value" id="invTotalSKUs">—</div></div></div>
+          <div class="stat-card"><div class="stat-body"><div class="stat-label">Low Stock</div><div class="stat-value" id="invLowStock">—</div><div class="stat-sub">Below reorder</div></div></div>
+          <div class="stat-card"><div class="stat-body"><div class="stat-label">Out of Stock</div><div class="stat-value" id="invOutOfStock">—</div></div></div>
+        </div>
+
+        <div class="entry-toggle-bar">
+          <div class="toggle-group">
+            <div class="toggle-opt active" onclick="switchMode('inv','list',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>View Stock</div>
+            <div class="toggle-opt" id="invAdjTab" onclick="switchMode('inv','adjust',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Adjust Stock</div>
+            <div class="toggle-opt" id="invBulkTab" onclick="switchMode('inv','bulk',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/></svg>Bulk Import</div>
+          </div>
+        </div>
+
+        <div id="inv-list-view">
+          <div class="card mb-24">
+            <div class="card-header"><div><div class="card-title">Inventory</div></div><div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search…" oninput="_debouncedInv(this.value)"></div></div>
+            <div class="filter-bar"><div class="chip active" data-fg="invf" onclick="invState.status='';loadInventory()">All</div><div class="chip" data-fg="invf" onclick="invState.status='in_stock';loadInventory()">In Stock</div><div class="chip" data-fg="invf" onclick="invState.status='low_stock';loadInventory()">Low Stock</div><div class="chip" data-fg="invf" onclick="invState.status='out_of_stock';loadInventory()">Out of Stock</div></div>
+            <div class="table-wrap"><table><thead><tr><th data-sort>SKU</th><th data-sort>Product</th><th data-sort>Category</th><th data-sort>In Stock</th><th data-sort>Reorder Pt.</th><th data-sort>Level</th><th data-sort>Unit Cost</th><th data-sort>Total Value</th><th data-sort>Status</th><th>Actions</th></tr></thead><tbody id="invTbody"><tr><td colspan="10" class="empty-state">Loading…</td></tr></tbody></table></div>
+            <div class="table-pagination" id="invPagination"></div>
+          </div>
+        </div>
+
+        <div id="inv-adjust-view" style="display:none">
+          <div class="card mb-24">
+            <div class="card-header"><div><div class="card-title">Adjust Stock Level</div><div class="card-subtitle">Add or remove units manually</div></div></div>
+            <div class="card-body">
+              <div id="invAdjError" class="alert alert-danger" style="display:none;margin-bottom:14px"></div>
+              <div id="invAdjSuccess" class="alert alert-success" style="display:none;margin-bottom:14px"></div>
+              <form id="invAdjForm" onsubmit="submitAdjustStock(event)">
+                <div class="form-grid">
+                  <div class="form-group form-full"><label class="form-label">Product <span class="req">*</span></label><select name="adj_product_id" id="adjProductSelect" class="form-select" required><option value="">— Select product —</option></select></div>
+                  <div class="form-group"><label class="form-label">Quantity Delta <span class="req">*</span></label><input type="number" name="adj_delta" class="form-input" placeholder="+10 or -5" required><span class="form-hint">Positive = add · Negative = remove</span></div>
+                  <div class="form-group"><label class="form-label">Reason / Note</label><input type="text" name="adj_note" class="form-input" placeholder="e.g. Received delivery"></div>
+                </div>
+                <div class="form-actions"><button type="submit" class="topbar-btn btn-primary">Apply Adjustment</button><button type="reset" class="topbar-btn btn-ghost">Clear</button></div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div id="inv-bulk-view" style="display:none">
+          <div class="card mb-24">
+            <div class="card-header"><div><div class="card-title">Bulk Import Inventory</div><div class="card-subtitle">Required: sku, quantity</div></div><button class="topbar-btn btn-ghost" onclick="downloadTemplate('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Template</button></div>
+            <div class="card-body">
+              <div class="upload-zone" onclick="document.getElementById('invImportFile').click()"><div class="upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div><div class="upload-title" id="invImportName">Drop or click to select file</div><div class="upload-sub">Supports <span>.xlsx</span> and <span>.xls</span></div><input type="file" id="invImportFile" accept=".xlsx,.xls" style="display:none" onchange="document.getElementById('invImportName').textContent=this.files[0]?.name||'Drop or click to select file'"></div>
+              <button class="topbar-btn btn-primary" style="margin-top:14px" onclick="submitBulkImport('inventory','invImportFile','invImportResult','invFailedTbody')">Upload & Import</button>
+              <div id="invImportResult" class="alert" style="display:none;margin-top:12px"></div>
+            </div>
+          </div>
+          <div class="card"><div class="card-header"><div><div class="card-title">Failed Records</div></div></div><div class="table-wrap"><table><thead><tr><th>Row #</th><th>Reason</th><th>Original Data</th></tr></thead><tbody id="invFailedTbody"><tr><td colspan="3" class="empty-state">No failed records</td></tr></tbody></table></div></div>
+        </div>
+      </div>
+
+      <!-- PRODUCTS -->
+      <div class="page" id="page-products">
+        <div class="entry-toggle-bar">
+          <div class="toggle-group">
+            <div class="toggle-opt active" onclick="switchMode('prod','list',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>View Catalogue</div>
+            <div class="toggle-opt" id="prodAddTab" onclick="switchMode('prod','add',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Product</div>
+            <div class="toggle-opt" id="prodBulkTab" onclick="switchMode('prod','bulk',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/></svg>Bulk Import</div>
+          </div>
+        </div>
+
+        <div id="prod-list-view">
+          <div class="card mb-24">
+            <div class="card-header"><div><div class="card-title">Product Catalogue</div></div>
+              <div class="header-actions">
+                <select id="productCategoryFilter" class="form-select" style="width:150px;padding:6px 10px;font-size:0.8rem" onchange="prodState.category=this.value;loadProducts()"><option value="">All Categories</option></select>
+                <div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search products…" oninput="_debouncedProd(this.value)"></div>
+              </div>
+            </div>
+            <div class="table-wrap"><table><thead><tr><th data-sort>SKU</th><th data-sort>Product Name</th><th data-sort>Category</th><th data-sort>Sell Price</th><th data-sort>Cost Price</th><th data-sort>Margin</th><th data-sort>Stock</th><th data-sort>Status</th><th>Actions</th></tr></thead><tbody id="productsTbody"><tr><td colspan="9" class="empty-state">Loading…</td></tr></tbody></table></div>
+            <div class="table-pagination" id="productsPagination"></div>
+          </div>
+        </div>
+
+        <div id="prod-add-view" style="display:none">
+          <div class="card mb-24">
+            <div class="card-header"><div><div class="card-title">Add Product</div><div class="card-subtitle">Fields marked * are required</div></div></div>
+            <div class="card-body">
+              <div id="prodAddError" class="alert alert-danger" style="display:none;margin-bottom:14px"></div>
+              <div id="prodAddSuccess" class="alert alert-success" style="display:none;margin-bottom:14px"></div>
+              <form id="prodAddForm" onsubmit="submitAddProduct(event)">
+                <div class="form-grid cols-3">
+                  <div class="form-group" style="grid-column:span 2"><label class="form-label">Product Name <span class="req">*</span></label><input type="text" name="prod_name" class="form-input" placeholder="e.g. Organic Maize 50kg" required></div>
+                  <div class="form-group"><label class="form-label">Category</label><input type="text" name="prod_category" class="form-input" placeholder="General"></div>
+                  <div class="form-group"><label class="form-label">SKU <span class="form-hint">(auto if blank)</span></label><input type="text" name="prod_sku" class="form-input" placeholder="SKU-001"></div>
+                  <div class="form-group"><label class="form-label">Sell Price (KES) <span class="req">*</span></label><input type="number" name="prod_sell_price" class="form-input" placeholder="0.00" step="0.01" min="0.01" required></div>
+                  <div class="form-group"><label class="form-label">Cost Price (KES)</label><input type="number" name="prod_cost_price" class="form-input" placeholder="0.00" step="0.01" min="0"></div>
+                  <div class="form-group"><label class="form-label">Reorder Point</label><input type="number" name="prod_reorder" class="form-input" placeholder="10" min="0"></div>
+                  <div class="form-group"><label class="form-label">Initial Stock</label><input type="number" name="prod_initial_qty" class="form-input" placeholder="0" min="0"></div>
+                </div>
+                <div class="form-actions"><button type="submit" class="topbar-btn btn-primary">Add Product</button><button type="reset" class="topbar-btn btn-ghost">Clear</button></div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div id="prod-bulk-view" style="display:none">
+          <div class="card mb-24">
+            <div class="card-header"><div><div class="card-title">Bulk Import Products</div><div class="card-subtitle">Required: name, sell_price</div></div><button class="topbar-btn btn-ghost" onclick="downloadTemplate('products')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Template</button></div>
+            <div class="card-body">
+              <div class="upload-zone" onclick="document.getElementById('prodImportFile').click()"><div class="upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div><div class="upload-title" id="prodImportName">Drop or click to select file</div><div class="upload-sub">Supports <span>.xlsx</span> and <span>.xls</span></div><input type="file" id="prodImportFile" accept=".xlsx,.xls" style="display:none" onchange="document.getElementById('prodImportName').textContent=this.files[0]?.name||'Drop or click to select file'"></div>
+              <button class="topbar-btn btn-primary" style="margin-top:14px" onclick="submitBulkImport('products','prodImportFile','prodImportResult','prodFailedTbody')">Upload & Import</button>
+              <div id="prodImportResult" class="alert" style="display:none;margin-top:12px"></div>
+            </div>
+          </div>
+          <div class="card"><div class="card-header"><div><div class="card-title">Failed Records</div></div></div><div class="table-wrap"><table><thead><tr><th>Row #</th><th>Reason</th><th>Original Data</th></tr></thead><tbody id="prodFailedTbody"><tr><td colspan="3" class="empty-state">No failed records</td></tr></tbody></table></div></div>
+        </div>
+      </div>
+
+      <!-- REPORTS -->
+      <div class="page" id="page-reports">
+
+        <!-- Tab bar + date filter -->
+        <div class="rpt-topbar mb-24">
+          <div class="toggle-group rpt-tabs">
+            <div class="toggle-opt rpt-tab active" onclick="switchReportTab('overview',this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+              Overview
+            </div>
+            <div class="toggle-opt rpt-tab" onclick="switchReportTab('profit',this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              Profit
+            </div>
+            <div class="toggle-opt rpt-tab" onclick="switchReportTab('products',this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+              Products
+            </div>
+            <div class="toggle-opt rpt-tab" onclick="switchReportTab('customers',this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Customers
+            </div>
+            <div class="toggle-opt rpt-tab" onclick="switchReportTab('team',this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              Team
+            </div>
+          </div>
+          <div class="rpt-date-filter">
+            <input type="date" id="reportFromDate" class="form-input" style="width:140px;padding:6px 10px;font-size:.8rem" onchange="loadReportTab(rptState.tab)">
+            <span style="color:var(--text-3);font-size:.8rem">to</span>
+            <input type="date" id="reportToDate" class="form-input" style="width:140px;padding:6px 10px;font-size:.8rem" onchange="loadReportTab(rptState.tab)">
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="topbar-btn btn-primary" onclick="downloadReport('summary')" title="Full Summary (4 sheets)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
+              <button class="topbar-btn btn-ghost" onclick="downloadReport('sales')" title="Sales CSV">Sales</button>
+              <button class="topbar-btn btn-ghost" onclick="downloadReport('products')">Products</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- OVERVIEW panel -->
+        <div id="rpt-overview" class="rpt-panel">
+          <!-- 7 KPI cards -->
+          <div class="rpt-kpi-grid mb-24">
+            <div class="stat-card featured">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+              <div><div class="stat-label">Revenue</div><div class="stat-value" id="rptRevenue">—</div></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="1"/></svg></div>
+              <div><div class="stat-label">Cost of Goods (COGS)</div><div class="stat-value" id="rptCOGS">—</div></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+              <div><div class="stat-label">Gross Profit</div><div class="stat-value" id="rptGrossProfit">—</div></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+              <div><div class="stat-label">Gross Margin</div><div class="stat-value" id="rptMarginPct">—</div></div>
+            </div>
+            <div class="stat-card">
+              <div><div class="stat-label">Transactions</div><div class="stat-value" id="rptTxCount">—</div></div>
+            </div>
+            <div class="stat-card">
+              <div><div class="stat-label">Units Sold</div><div class="stat-value" id="rptUnitsSold">—</div></div>
+            </div>
+            <div class="stat-card">
+              <div><div class="stat-label">Unique Customers</div><div class="stat-value" id="rptUniqCust">—</div></div>
+            </div>
+          </div>
+
+          <!-- Charts row 1 -->
+          <div class="card mb-24">
+            <div class="card-header"><div><div class="card-title">Daily Revenue — Last 30 Days</div><div class="card-subtitle">Sales trend</div></div></div>
+            <div class="card-body"><div class="chart-container" style="height:200px"><canvas id="dailySalesChart"></canvas></div></div>
+          </div>
+
+          <div class="grid-2 mb-24">
+            <div class="card">
+              <div class="card-header"><div><div class="card-title">Revenue vs COGS vs Profit</div><div class="card-subtitle">Last 12 months</div></div></div>
+              <div class="card-body"><div class="chart-container"><canvas id="monthlyProfitChart"></canvas></div></div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div><div class="card-title">Revenue by Payment Method</div><div class="card-subtitle">All time</div></div></div>
+              <div class="card-body"><div class="chart-container"><canvas id="paymentChart"></canvas></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROFIT panel -->
+        <div id="rpt-profit" class="rpt-panel" style="display:none">
+          <div class="card mb-24">
+            <div class="card-header"><div><div class="card-title">Revenue &amp; Gross Profit by Category</div><div class="card-subtitle">Grouped bar</div></div></div>
+            <div class="card-body"><div class="chart-container"><canvas id="catMarginChart"></canvas></div></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div><div class="card-title">Product Profitability</div><div class="card-subtitle">Top 15 products by gross profit</div></div></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Product</th><th>SKU</th><th>Category</th><th>Revenue</th><th>COGS</th><th>Gross Profit</th><th>Margin</th></tr></thead>
+                <tbody id="prodProfitTbody"><tr><td colspan="7" class="empty-state">Loading…</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRODUCTS panel -->
+        <div id="rpt-products" class="rpt-panel" style="display:none">
+          <div class="grid-2 mb-24">
+            <div class="card">
+              <div class="card-header"><div><div class="card-title">Top Selling Products</div><div class="card-subtitle">By units sold (all time)</div></div></div>
+              <div class="card-body"><div class="chart-container"><canvas id="topProductsChart2"></canvas></div></div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div><div class="card-title">Revenue by Category</div><div class="card-subtitle">This month</div></div></div>
+              <div class="card-body"><div class="chart-container"><canvas id="categoryRevenueChart"></canvas></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div><div class="card-title">Inventory Value by Category</div><div class="card-subtitle">Stock at cost</div></div></div>
+            <div class="card-body"><div class="chart-container" style="height:200px"><canvas id="invValueChart2"></canvas></div></div>
+          </div>
+        </div>
+
+        <!-- CUSTOMERS panel -->
+        <div id="rpt-customers" class="rpt-panel" style="display:none">
+          <div class="grid-2 mb-24">
+            <div class="card">
+              <div class="card-header"><div><div class="card-title">Customer Retention</div><div class="card-subtitle">Repeat vs one-time buyers</div></div></div>
+              <div class="card-body"><div class="chart-container"><canvas id="customerTypeChart"></canvas></div></div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div><div class="card-title">Top 15 Customers</div><div class="card-subtitle">By revenue</div></div></div>
+              <div class="table-wrap" style="max-height:320px;overflow-y:auto">
+                <table>
+                  <thead><tr><th>#</th><th>Customer</th><th>Revenue</th><th>Avg Order</th><th>History</th></tr></thead>
+                  <tbody id="topCustomersTbody"><tr><td colspan="5" class="empty-state">Loading…</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEAM panel -->
+        <div id="rpt-team" class="rpt-panel" style="display:none">
+          <div class="card mb-24">
+            <div class="card-header"><div><div class="card-title">Salesperson Revenue</div><div class="card-subtitle">Add salesperson names to sales to track performance</div></div></div>
+            <div class="card-body"><div class="chart-container"><canvas id="salespersonChart"></canvas></div></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div><div class="card-title">Performance Leaderboard</div></div></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>#</th><th>Salesperson</th><th>Transactions</th><th>Units</th><th>Revenue</th><th>Gross Profit</th></tr></thead>
+                <tbody id="teamTableBody"><tr><td colspan="6" class="empty-state">Loading…</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- USERS -->
+      <div class="page" id="page-users">
+        <div id="usersAccessDenied" class="alert alert-danger mb-24" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          Access denied. Only administrators can manage users.
+        </div>
+        <div id="usersContent">
+          <div class="card">
+            <div class="card-header"><div><div class="card-title">User Management</div><div class="card-subtitle">Manage accounts and role permissions</div></div>
+              <button class="topbar-btn btn-primary" onclick="Modal.open('addUserModal')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add User
+              </button>
+            </div>
+            <div class="role-legend">
+              <span class="badge badge-danger">Admin</span> Full access
+              <span class="badge badge-info" style="margin-left:12px">Staff</span> Add/edit records, no user management
+              <span class="badge badge-muted" style="margin-left:12px">Viewer</span> Read-only access
+            </div>
+            <div class="table-wrap"><table><thead><tr><th>User</th><th>Email</th><th>Role</th><th>Last Login</th><th>Status</th><th>Actions</th></tr></thead><tbody id="usersTbody"><tr><td colspan="6" class="empty-state">Loading…</td></tr></tbody></table></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PURCHASES -->
+      <div class="page" id="page-purchases">
+        <div class="entry-toggle-bar">
+          <div class="toggle-group">
+            <div class="toggle-opt active" onclick="switchMode('po','list',this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>
+              View Orders
+            </div>
+            <div class="toggle-opt" id="poAddTab" onclick="switchMode('po','add',this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              New Order
+            </div>
+          </div>
+        </div>
+
+        <!-- PO List -->
+        <div id="po-list-view">
+          <div class="card mb-24">
+            <div class="card-header">
+              <div><div class="card-title">Purchase Orders</div><div class="card-subtitle" id="poTotalLabel">—</div></div>
+              <div class="filter-bar" style="margin:0">
+                <div class="chip active" data-fg="pof" onclick="poState.status='';loadPurchases()">All</div>
+                <div class="chip" data-fg="pof" onclick="poState.status='pending';loadPurchases()">Pending</div>
+                <div class="chip" data-fg="pof" onclick="poState.status='received';loadPurchases()">Received</div>
+                <div class="chip" data-fg="pof" onclick="poState.status='cancelled';loadPurchases()">Cancelled</div>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th data-sort>Ref #</th><th data-sort>Product</th><th data-sort>Supplier</th><th data-sort>Qty</th><th data-sort>Unit Cost</th><th data-sort>Total Cost</th><th data-sort>Order Date</th><th data-sort>Received</th><th data-sort>Status</th><th>Actions</th></tr></thead>
+                <tbody id="poTbody"><tr><td colspan="10" class="empty-state">Loading…</td></tr></tbody>
+              </table>
+            </div>
+            <div class="table-pagination" id="poPagination"></div>
+          </div>
+        </div>
+
+        <!-- New PO Form -->
+        <div id="po-add-view" style="display:none">
+          <div class="card mb-24">
+            <div class="card-header"><div><div class="card-title">Create Purchase Order</div><div class="card-subtitle">Fields marked * are required</div></div></div>
+            <div class="card-body">
+              <div id="poAddError" class="alert alert-danger" style="display:none;margin-bottom:14px"></div>
+              <div id="poAddSuccess" class="alert alert-success" style="display:none;margin-bottom:14px"></div>
+              <form id="poAddForm" onsubmit="submitAddPurchase(event)">
+                <div class="form-grid cols-3">
+                  <div class="form-group" style="grid-column:span 2"><label class="form-label">Product <span class="req">*</span></label>
+                    <select name="po_product_id" id="poProductSelect" class="form-select" required><option value="">— Loading products… —</option></select>
+                  </div>
+                  <div class="form-group"><label class="form-label">Order Date <span class="req">*</span></label><input type="date" name="po_order_date" class="form-input" required></div>
+                  <div class="form-group"><label class="form-label">Quantity <span class="req">*</span></label><input type="number" name="po_quantity" class="form-input" placeholder="1" min="1" required></div>
+                  <div class="form-group"><label class="form-label">Unit Cost (KES) <span class="req">*</span></label><input type="number" name="po_unit_cost" class="form-input" placeholder="0.00" step="0.01" min="0.01" required></div>
+                  <div class="form-group"><label class="form-label">Supplier</label><input type="text" name="po_supplier" class="form-input" placeholder="Supplier name"></div>
+                </div>
+                <div class="form-actions"><button type="submit" class="topbar-btn btn-primary">Create Order</button><button type="reset" class="topbar-btn btn-ghost">Clear</button></div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AUDIT LOG -->
+      <div class="page" id="page-auditlog">
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">Audit Log</div><div class="card-subtitle" id="auditTotalLabel">All write actions by all users</div></div>
+            <div class="header-actions">
+              <select id="auditEntityFilter" class="form-select" style="width:140px;padding:6px 10px;font-size:.8rem" onchange="auditState.entity_type=this.value;loadAuditLog()">
+                <option value="">All Types</option>
+                <option value="sale">Sales</option>
+                <option value="product">Products</option>
+                <option value="user">Users</option>
+                <option value="inventory">Inventory</option>
+              </select>
+              <div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search…" oninput="_debouncedAudit(this.value)"></div>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Time</th><th>User</th><th>Action</th><th>Type</th><th>ID</th><th>Detail</th><th>IP</th></tr></thead>
+              <tbody id="auditTbody"><tr><td colspan="7" class="empty-state">Loading…</td></tr></tbody>
+            </table>
+          </div>
+          <div class="table-pagination" id="auditPagination"></div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app-shell -->
+
+<!-- MODALS -->
+<!-- Receive Purchase Order -->
+<div class="modal-overlay" id="receivePOModal">
+  <div class="modal"><div class="modal-header"><div class="modal-title">Receive Purchase Order</div><div class="modal-close" onclick="Modal.close('receivePOModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div></div>
+    <form id="receivePOForm" onsubmit="submitReceivePO(event)"><input type="hidden" name="receive_po_id">
+      <div class="modal-body">
+        <div id="receivePOError" class="alert alert-danger" style="display:none;margin-bottom:12px"></div>
+        <div id="receivePOInfo" style="font-weight:600;font-size:.95rem;margin-bottom:12px;color:var(--text-primary)"></div>
+        <p style="margin:0 0 14px;color:var(--text-secondary);font-size:.875rem">This will mark the order as received and add the stock to inventory.</p>
+        <div class="form-group"><label class="form-label">Received Date</label><input type="date" name="receive_date" class="form-input"><span class="form-hint">Leave blank to use today's date</span></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="topbar-btn btn-ghost" onclick="Modal.close('receivePOModal')">Cancel</button><button type="submit" class="topbar-btn btn-primary">Mark Received</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Sale -->
+<div class="modal-overlay" id="editSaleModal">
+  <div class="modal"><div class="modal-header"><div class="modal-title">Edit Sale</div><div class="modal-close" onclick="Modal.close('editSaleModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div></div>
+    <form id="editSaleForm" onsubmit="submitEditSale(event)"><input type="hidden" name="edit_sale_id">
+      <div class="modal-body"><div id="editSaleError" class="alert alert-danger" style="display:none;margin-bottom:12px"></div>
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">Date</label><input type="date" name="edit_sale_date" class="form-input"></div>
+          <div class="form-group"><label class="form-label">Status</label><select name="edit_status" class="form-select"><option value="completed">Completed</option><option value="pending">Pending</option><option value="cancelled">Cancelled</option></select></div>
+          <div class="form-group"><label class="form-label">Customer</label><input type="text" name="edit_customer" class="form-input"></div>
+          <div class="form-group"><label class="form-label">Payment Method</label><select name="edit_payment" class="form-select"><option>Cash</option><option>M-Pesa</option><option>Bank Transfer</option><option>Credit</option></select></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="topbar-btn btn-ghost" onclick="Modal.close('editSaleModal')">Cancel</button><button type="submit" class="topbar-btn btn-primary">Update</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Inventory -->
+<div class="modal-overlay" id="editInvModal">
+  <div class="modal"><div class="modal-header"><div class="modal-title">Edit Inventory</div><div class="modal-close" onclick="Modal.close('editInvModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div></div>
+    <form id="editInvForm" onsubmit="submitEditInventory(event)">
+      <input type="hidden" name="edit_inv_product_id">
+      <div class="modal-body">
+        <div id="editInvError" class="alert alert-danger" style="display:none;margin-bottom:12px"></div>
+        <div class="form-group"><label class="form-label">Product</label><input type="text" name="edit_inv_product_name" class="form-input" readonly style="opacity:0.7"></div>
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">Quantity <span class="req">*</span></label><input type="number" name="edit_inv_quantity" class="form-input" min="0" required></div>
+          <div class="form-group"><label class="form-label">Location</label><input type="text" name="edit_inv_location" class="form-input" placeholder="Main Warehouse"></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="topbar-btn btn-ghost" onclick="Modal.close('editInvModal')">Cancel</button><button type="submit" class="topbar-btn btn-primary">Update</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Product -->
+<div class="modal-overlay" id="editProductModal">
+  <div class="modal"><div class="modal-header"><div class="modal-title">Edit Product</div><div class="modal-close" onclick="Modal.close('editProductModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div></div>
+    <form id="editProductForm" onsubmit="submitEditProduct(event)"><input type="hidden" name="edit_prod_id">
+      <div class="modal-body"><div id="editProdError" class="alert alert-danger" style="display:none;margin-bottom:12px"></div>
+        <div class="form-grid">
+          <div class="form-group form-full"><label class="form-label">Product Name <span class="req">*</span></label><input type="text" name="edit_prod_name" class="form-input" required></div>
+          <div class="form-group"><label class="form-label">Category</label><input type="text" name="edit_prod_category" class="form-input"></div>
+          <div class="form-group"><label class="form-label">Sell Price (KES)</label><input type="number" name="edit_prod_sell" class="form-input" step="0.01"></div>
+          <div class="form-group"><label class="form-label">Cost Price (KES)</label><input type="number" name="edit_prod_cost" class="form-input" step="0.01"></div>
+          <div class="form-group"><label class="form-label">Reorder Point</label><input type="number" name="edit_prod_reorder" class="form-input"></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="topbar-btn btn-ghost" onclick="Modal.close('editProductModal')">Cancel</button><button type="submit" class="topbar-btn btn-primary">Save</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- Add User -->
+<div class="modal-overlay" id="addUserModal">
+  <div class="modal"><div class="modal-header"><div class="modal-title">Add User</div><div class="modal-close" onclick="Modal.close('addUserModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div></div>
+    <form id="addUserForm" onsubmit="submitAddUser(event)">
+      <div class="modal-body"><div id="addUserError" class="alert alert-danger" style="display:none;margin-bottom:12px"></div>
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">Username <span class="req">*</span></label><input type="text" name="user_username" class="form-input" placeholder="jdoe" required></div>
+          <div class="form-group"><label class="form-label">Email <span class="req">*</span></label><input type="email" name="user_email" class="form-input" placeholder="jane@example.com" required></div>
+          <div class="form-group"><label class="form-label">Password <span class="req">*</span></label><input type="password" name="user_password" class="form-input" placeholder="Min. 8 chars" minlength="8" required></div>
+          <div class="form-group"><label class="form-label">Role</label><select name="user_role" class="form-select"><option value="viewer">Viewer — read only</option><option value="staff">Staff — add/edit records</option><option value="admin">Admin — full access</option></select></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="topbar-btn btn-ghost" onclick="Modal.close('addUserModal')">Cancel</button><button type="submit" class="topbar-btn btn-primary">Create User</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit User -->
+<div class="modal-overlay" id="editUserModal">
+  <div class="modal"><div class="modal-header"><div class="modal-title">Edit User</div><div class="modal-close" onclick="Modal.close('editUserModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div></div>
+    <form id="editUserForm" onsubmit="submitEditUser(event)"><input type="hidden" name="edit_user_id">
+      <div class="modal-body"><div id="editUserError" class="alert alert-danger" style="display:none;margin-bottom:12px"></div>
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">Email</label><input type="email" name="edit_user_email" class="form-input"></div>
+          <div class="form-group"><label class="form-label">Role</label><select name="edit_user_role" class="form-select"><option value="viewer">Viewer</option><option value="staff">Staff</option><option value="admin">Admin</option></select></div>
+          <div class="form-group form-full"><label class="form-label">Status</label><select name="edit_user_active" class="form-select"><option value="1">Active</option><option value="0">Inactive</option></select></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="topbar-btn btn-ghost" onclick="Modal.close('editUserModal')">Cancel</button><button type="submit" class="topbar-btn btn-primary">Save</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- Account Settings (all users) -->
+<div class="modal-overlay" id="accountModal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <div class="modal-title">Account Settings</div>
+      <div class="modal-close" onclick="Modal.close('accountModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+    </div>
+
+    <!-- User identity banner -->
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 22px;border-bottom:1px solid var(--border);background:var(--surface-2)">
+      <div class="user-avatar" id="accountAvatar" style="width:46px;height:46px;font-size:1.05rem;flex-shrink:0">AD</div>
+      <div style="min-width:0">
+        <div style="font-weight:700;font-size:.97rem;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="accountName">Admin</div>
+        <div style="font-size:.74rem;color:var(--text-3);margin-top:2px" id="accountRoleLabel">admin</div>
+      </div>
+    </div>
+
+    <!-- Tab bar -->
+    <div style="display:flex;border-bottom:1px solid var(--border);background:var(--surface)">
+      <button class="acct-tab active" data-tab="acct-username" onclick="switchAccountTab(this)">Username</button>
+      <button class="acct-tab" data-tab="acct-password" onclick="switchAccountTab(this)">Password</button>
+      <button class="acct-tab" data-tab="acct-notifications" onclick="switchAccountTab(this)">Notifications</button>
+    </div>
+
+    <div class="modal-body" style="padding:20px 22px">
+
+      <!-- ── Username tab ── -->
+      <div id="acct-username" class="acct-panel">
+        <p style="font-size:.78rem;color:var(--text-3);margin-bottom:16px">Change the username you use to sign in.</p>
+        <div id="changeUsernameError"  class="alert alert-danger"  style="display:none;margin-bottom:12px"></div>
+        <div id="changeUsernameSuccess" class="alert alert-success" style="display:none;margin-bottom:12px"></div>
+        <div class="form-group" style="margin-bottom:12px">
+          <label class="form-label">New Username <span class="req">*</span></label>
+          <input type="text" id="newUsername" class="form-input" placeholder="Enter new username" autocomplete="username">
+        </div>
+        <div class="form-group" style="margin-bottom:18px">
+          <label class="form-label">Current Password (to confirm) <span class="req">*</span></label>
+          <input type="password" id="usernameCurrentPw" class="form-input" placeholder="Your current password" autocomplete="current-password">
+        </div>
+        <button class="topbar-btn btn-primary" onclick="submitChangeUsername()">Update Username</button>
+      </div>
+
+      <!-- ── Password tab ── -->
+      <div id="acct-password" class="acct-panel" style="display:none">
+        <p style="font-size:.78rem;color:var(--text-3);margin-bottom:16px">Choose a strong password of at least 8 characters.</p>
+        <div id="changePwError"   class="alert alert-danger"  style="display:none;margin-bottom:12px"></div>
+        <div id="changePwSuccess" class="alert alert-success" style="display:none;margin-bottom:12px"></div>
+        <div class="form-group" style="margin-bottom:12px">
+          <label class="form-label">Current Password <span class="req">*</span></label>
+          <input type="password" id="currentPassword" class="form-input" placeholder="Current password" autocomplete="current-password">
+        </div>
+        <div class="form-group" style="margin-bottom:12px">
+          <label class="form-label">New Password <span class="req">*</span></label>
+          <input type="password" id="newPassword" class="form-input" placeholder="Min. 8 characters" autocomplete="new-password">
+        </div>
+        <div class="form-group" style="margin-bottom:18px">
+          <label class="form-label">Confirm New Password <span class="req">*</span></label>
+          <input type="password" id="confirmPassword" class="form-input" placeholder="Repeat new password" autocomplete="new-password">
+        </div>
+        <button class="topbar-btn btn-primary" onclick="submitChangePassword()">Update Password</button>
+      </div>
+
+      <!-- ── Notifications tab ── -->
+      <div id="acct-notifications" class="acct-panel" style="display:none">
+        <p style="font-size:.78rem;color:var(--text-3);margin-bottom:18px">
+          Get alerted when stock falls below reorder levels. Notifications are sent every 5 minutes if low-stock items exist.
+        </p>
+
+        <!-- Permission status card -->
+        <div id="notifStatusCard" style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:18px">
+          <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--surface-2)">
+            <div id="notifStatusIcon" style="width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--border)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </div>
+            <div style="flex:1;min-width:0">
+              <div id="notifStatusLabel" style="font-size:.84rem;font-weight:600;color:var(--text)">Checking…</div>
+              <div id="notifStatusSub"   style="font-size:.72rem;color:var(--text-3);margin-top:2px"></div>
+            </div>
+            <button id="notifActionBtn" class="topbar-btn btn-primary" style="display:none" onclick="requestNotifPermission()">Enable</button>
+          </div>
+        </div>
+
+        <!-- Low-stock threshold -->
+        <div class="form-group" style="margin-bottom:18px">
+          <label class="form-label">Check interval</label>
+          <select id="notifIntervalSel" class="form-select" onchange="saveNotifSettings()">
+            <option value="5">Every 5 minutes</option>
+            <option value="15">Every 15 minutes</option>
+            <option value="30">Every 30 minutes</option>
+            <option value="60">Every hour</option>
+          </select>
+        </div>
+
+        <!-- Sound toggle -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border:1px solid var(--border);border-radius:8px;margin-bottom:10px">
+          <div>
+            <div style="font-size:.83rem;font-weight:600;color:var(--text)">Low stock alerts</div>
+            <div style="font-size:.71rem;color:var(--text-3);margin-top:2px">Show a desktop notification when items fall below reorder point</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="notifLowStockToggle" onchange="saveNotifSettings()" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <button class="topbar-btn btn-ghost" style="margin-top:6px" onclick="testNotification()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          Send test notification
+        </button>
+
+        <!-- Shown only when permission is denied -->
+        <div id="notifBlockedInstructions" style="display:none;margin-top:16px;padding:14px 16px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- SESSION TIMEOUT WARNING MODAL -->
+<div class="modal-overlay" id="sessionTimeoutModal" style="display:none;z-index:9999">
+  <div class="modal" style="max-width:380px;text-align:center">
+    <div class="modal-body" style="padding:32px 28px">
+      <div style="width:52px;height:52px;border-radius:50%;background:rgba(217,119,6,.12);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2" width="24" height="24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:8px">Session Expiring Soon</div>
+      <p style="font-size:.82rem;color:var(--text-2);margin-bottom:20px">You'll be logged out automatically in <strong id="sessionCountdown">5:00</strong> due to inactivity.</p>
+      <div style="display:flex;gap:10px;justify-content:center">
+        <button class="topbar-btn btn-primary" onclick="extendSession()">Stay Logged In</button>
+        <button class="topbar-btn btn-ghost" onclick="doLogout()">Log Out Now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BARCODE / SKU SCANNER OVERLAY -->
+<div id="scannerOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;align-items:flex-start;justify-content:center;padding-top:120px" onclick="if(event.target===this)closeScannerInput()">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 24px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.25)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" width="18" height="18"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 8h2v8H7zM11 8h2v8h-2zM15 8h2v8h-2z"/></svg>
+      <span style="font-weight:700;font-size:.92rem;color:var(--text)">SKU / Barcode Lookup</span>
+      <button onclick="closeScannerInput()" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--text-3);font-size:1.2rem;line-height:1" title="Close (Esc)">×</button>
+    </div>
+    <div style="position:relative">
+      <input id="scannerInput" type="text" class="form-input" placeholder="Scan barcode or type SKU…"
+        style="padding-right:80px;font-family:monospace;letter-spacing:.05em"
+        oninput="if(this.value.length>=3)handleScannerSubmit()"
+        onkeydown="if(event.key==='Enter')handleScannerSubmit();if(event.key==='Escape')closeScannerInput()">
+      <button class="topbar-btn btn-primary" style="position:absolute;right:4px;top:4px;font-size:.75rem;padding:4px 10px" onclick="handleScannerSubmit()">Find</button>
+    </div>
+    <div id="scannerResult" style="margin-top:12px"></div>
+    <p style="font-size:.7rem;color:var(--text-3);margin-top:12px">Tip: Press <kbd style="background:var(--surface-2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:.68rem">/</kbd> or <kbd style="background:var(--surface-2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:.68rem">F2</kbd> to open this anywhere.</p>
+  </div>
+</div>
+
+<script>
+function toggleLoginPw(btn) {
+  const inp = document.getElementById('loginPassword');
+  const eye = document.getElementById('loginPwEye');
+  if (!inp) return;
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  eye.innerHTML = inp.type === 'text'
+    ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+    : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+}
+</script>
+
+<script src="/static/libs/chart.umd.min.js"></script>
+<script src="/static/js/api.js"></script>
+<script src="/static/js/app.js"></script>
+</body>
+</html>
